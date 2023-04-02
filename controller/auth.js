@@ -18,3 +18,15 @@ exports.postSignUp = async (req, res, next) => {
   }
   res.send(`create user with ${email} email`);
 };
+
+exports.postSignIn = async (req, res, next) => {
+  const { email, password } = req.body;
+  let user = await User.findOne({ email: email });
+  if (!user) {
+    return res
+      .status(400)
+      .send(`we havent any user with ${email} email . pls signup `);
+  }
+  const result = await bcrypt.compare(password, user.password);
+  console.log(result);
+};
