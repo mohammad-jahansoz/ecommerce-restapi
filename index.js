@@ -5,6 +5,8 @@ const adminRoutes = require("./routes/admin");
 const Product = require("./models/product");
 const cors = require("cors");
 const productsRoutes = require("./routes/products");
+const authRoutes = require("./routes/auth");
+
 app.use(cors());
 app.use(express.json());
 
@@ -15,6 +17,7 @@ try {
 }
 
 app.use(productsRoutes);
+app.use(authRoutes);
 
 app.get("/", async (req, res, next) => {
   const products = await Product.find();
