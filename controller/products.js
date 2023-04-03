@@ -8,8 +8,7 @@ exports.getProduct = async (req, res, next) => {
   }
   const product = await Product.findById(productId);
   if (!product)
-    res.status(404).send(`we havent any product with ${productId} id`);
-
+    return res.status(404).send(`we havent any product with ${productId} id`);
   res.status(200).send(product);
 };
 
@@ -35,7 +34,7 @@ exports.setComment = async (req, res, next) => {
   const { name, email, comment } = req.body;
   const productId = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(productId)) {
-    return res.status(200).send("you send invalid id , pls try again");
+    return res.status(400).send("you send invalid id , pls try again");
   }
   const product = await Product.findByIdAndUpdate(
     productId,

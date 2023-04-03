@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const objectId = mongoose.Types.ObjectId;
 const Product = require("../models/product");
+const User = require("../models/user");
 
 exports.updateProduct = async (req, res, next) => {
   const productId = req.params.id;
@@ -130,7 +131,8 @@ exports.deleteComment = async (req, res, next) => {
   }
 };
 
-exports.getPosts = async (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
   const products = await Product.find().sort({ createdAt: -1 });
+  const user = await User.findById(req.user._id).select("-password");
   res.status(200).send(products);
 };
