@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const objectId = mongoose.Types.ObjectId;
 
 const UserSchema = new mongoose.Schema(
   {
@@ -11,7 +12,17 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     password: String,
-    cart: [],
+    cart: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "Product",
+        },
+        quantity: Number,
+        _id: false,
+      },
+    ],
     isAdmin: {
       type: Boolean,
       default: false,
@@ -26,6 +37,21 @@ UserSchema.methods.generateAuthToken = function () {
     process.env.JWT_PRIVATE_KEY
   );
   return token;
+};
+
+UserSchema.methods.addToCart = async function (productId, quantity) {
+  let cartItem = [...this.cart];
+  const productIndex = cartItem.findIndex((i) => {
+    return i.productId.toString() === productId.toString();
+  });
+  if (productIndex < 0) {
+    cartItem.push({ productId, quantity });
+  } else {
+    cartItem[productIndex].quantity += quantity;
+  }
+
+  this.cart = cartItem;
+  return await this.save();
 };
 
 const User = new mongoose.model("user", UserSchema);

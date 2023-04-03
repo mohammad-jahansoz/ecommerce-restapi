@@ -14,9 +14,7 @@ exports.postSignUp = async (req, res, next) => {
     const user = new User({ email: email, password: hash });
     await user.save();
     const token = user.generateAuthToken();
-    res
-      .header("x-auth-token", token)
-      .send({ _id: user._id, email: user.email });
+    res.header("x-auth-token", token).send(user);
   } catch (err) {
     console.log(err);
     return res.send(err);
@@ -25,17 +23,24 @@ exports.postSignUp = async (req, res, next) => {
 
 exports.postSignIn = async (req, res, next) => {
   const { email, password } = req.body;
-  let user = await User.findOne({ email: email });
-  if (!user) {
-    return res
-      .status(400)
-      .send(`we havent any user with ${email} email . pls signup `);
+  try {
+    let user = await User.findOne({ email: email });
+    if (!user) {
+      return res
+        .status(400)
+        .send(`we havent any user with ${email} email . pls signup `);
+    }
+
+    const result = await bcrypt.compare(password, user.password);
+
+    if (!result) {
+      return res.status(400).send("your password is incorrect ! try again");
+    }
+    const token = user.generateAuthToken();
+    console.log(token);
+    res.header("x-auth-token", token).send(user);
+  } catch (err) {
+    console.log(err);
+    res.send(err);
   }
-  const result = await bcrypt.compare(password, user.password);
-  if (!result) {
-    return res.status(400).send("your password is incorrect ! try again");
-  }
-  const token = user.generateAuthToken();
-  console.log(token);
-  res.header("x-auth-token", token).send({ _id: user._id, email: user.email });
 };

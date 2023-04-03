@@ -82,7 +82,7 @@ exports.getComments = async (req, res, next) => {
   res.send(comments);
 };
 
-exports.getCommentsOfSinglePost = async (req, res, next) => {
+exports.getCommentsOfSingleProduct = async (req, res, next) => {
   const productId = req.params.id;
   const product = await Product.findById(productId);
 

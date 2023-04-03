@@ -24,7 +24,7 @@ router.get(
 router.get(
   "/api/product/comments/:id",
   [isAuth, isAdmin],
-  adminController.getCommentsOfSinglePost
+  adminController.getCommentsOfSingleProduct
 );
 router.put(
   "/api/product/comment/:productId/:commentId",

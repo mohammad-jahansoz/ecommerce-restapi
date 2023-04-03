@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
-
-module.exports = (req, res, next) => {
+const User = require("../models/user");
+module.exports = async (req, res, next) => {
   const token = req.header("x-auth-token");
   if (!token) return res.status(401).send("access denied. no token provide");
   try {
     const dataInToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-    req.user = dataInToken;
+    const user = await User.findById(dataInToken._id);
+    req.user = user;
     next();
   } catch (err) {
     console.log(err);
