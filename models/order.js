@@ -30,6 +30,11 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       default: 1,
     },
+    paymentInfo: {
+      date: Date,
+      shopTrackingCode: Number,
+      postTrackingCode: Number,
+    },
   },
   { timestamps: true }
 );
