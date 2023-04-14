@@ -23,6 +23,13 @@ const UserSchema = new mongoose.Schema(
         _id: false,
       },
     ],
+    order: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Order",
+      },
+    ],
     isAdmin: {
       type: Boolean,
       default: false,

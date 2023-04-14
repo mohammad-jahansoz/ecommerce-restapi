@@ -30,9 +30,7 @@ exports.postSignIn = async (req, res, next) => {
         .status(400)
         .send(`we havent any user with ${email} email . pls signup `);
     }
-
     const result = await bcrypt.compare(password, user.password);
-
     if (!result) {
       return res.status(400).send("your password is incorrect ! try again");
     }

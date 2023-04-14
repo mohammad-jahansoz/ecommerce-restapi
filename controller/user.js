@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const User = require("../models/user");
+const Order = require("../models/order");
 exports.addToCart = async (req, res, next) => {
   const { productId, quantity } = req.body;
   try {
@@ -13,16 +14,53 @@ exports.addToCart = async (req, res, next) => {
 };
 
 exports.getCart = async (req, res, next) => {
-  const userId = req.user._id;
   try {
-    const userWithProductsInCart = await User.findById(userId)
-      .select("-password -createdAt -updatedAt -__v -isAdmin")
-      .populate(
-        "cart.productId",
-        "-relatedProduct -category -likes -comments -createdAt -updatedAt -__v"
-      );
+    const userWithProductsInCart = await req.user.populate(
+      "cart.productId",
+      "-relatedProduct -category -likes -comments -createdAt -updatedAt -__v"
+    );
     console.log(userWithProductsInCart);
     res.send(userWithProductsInCart);
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
+};
+
+exports.setOrder = async (req, res, next) => {
+  try {
+    const userWithProductsInCart = await req.user.populate(
+      "cart.productId",
+      "-relatedProduct -category -likes -comments -createdAt -updatedAt -__v -imageUrl"
+    );
+
+    const products = userWithProductsInCart.cart.map((i) => {
+      const productData = { ...i.productId._doc };
+      if (productData.count >= i.quantity) {
+        return { ...productData, quantity: i.quantity };
+      } else {
+        return { ...productData, quantity: productData.count };
+      }
+    });
+
+    const order = new Order({
+      user: {
+        _id: req.user._id,
+        email: req.user.email,
+        name: req.body.name,
+        cellPhone: req.body.cellPhone,
+        address: {
+          province: req.body.address.province,
+          city: req.body.address.city,
+          address: req.body.address.address,
+          postCode: req.body.address.postCode,
+        },
+      },
+      products: products,
+    });
+
+    await order.save();
+    res.send(order);
   } catch (err) {
     console.log(err);
     res.send(err);
