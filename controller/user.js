@@ -82,7 +82,24 @@ exports.verifyOrder = async (req, res, next) => {
       { new: true }
     );
 
-    console.log(order);
+    const products = order.products;
+    for (const product of products) {
+      await Product.findByIdAndUpdate(product._id, {
+        $inc: { count: -product.quantity },
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $push: {
+          order: orderId,
+        },
+        cart: [],
+      },
+      { new: true }
+    );
+    console.log(user);
     res.send(order);
   } catch (err) {
     console.log(err);
