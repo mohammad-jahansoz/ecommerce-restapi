@@ -66,3 +66,43 @@ exports.setOrder = async (req, res, next) => {
     res.send(err);
   }
 };
+
+exports.verifyOrder = async (req, res, next) => {
+  const orderId = req.body.orderId;
+  try {
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        $inc: { status: 1 },
+        paymentInfo: {
+          date: new Date(),
+          shopTrackingCode: Math.floor(100000 + Math.random() * 900000),
+        },
+      },
+      { new: true }
+    );
+
+    await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $push: {
+          order: orderId,
+        },
+        cart: [],
+      },
+      { new: true }
+    );
+
+    const products = order.products;
+    for (const product of products) {
+      await Product.findByIdAndUpdate(product._id, {
+        $inc: { count: -product.quantity },
+      });
+    }
+
+    res.send(order);
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
+};
