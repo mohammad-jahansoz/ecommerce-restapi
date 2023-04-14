@@ -54,3 +54,5 @@ exports.setComment = async (req, res, next) => {
   );
   res.send(product.comments);
 };
+
+exports.searchProducts = async (req, res, next) => {};

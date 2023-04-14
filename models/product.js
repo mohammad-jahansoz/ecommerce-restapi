@@ -90,6 +90,8 @@ const ProductSchema = new Schema(
   }
 );
 
+ProductSchema.index({});
+
 const Product = mongoose.model("Product", ProductSchema);
 
 module.exports = Product;

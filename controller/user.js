@@ -1,6 +1,19 @@
 const Product = require("../models/product");
 const User = require("../models/user");
 const Order = require("../models/order");
+
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.NODEMAILER_HOST,
+  port: process.env.NODEMAILER_PORT,
+  secure: false,
+  auth: {
+    user: process.env.NODEMAILER_USER,
+    pass: process.env.NODEMAILER_PASS,
+  },
+});
+
 exports.addToCart = async (req, res, next) => {
   const { productId, quantity } = req.body;
   try {
@@ -81,6 +94,19 @@ exports.verifyOrder = async (req, res, next) => {
       { new: true }
     );
 
+    transporter.sendMail({
+      from: '"👻فروشگاه اینترنتی میوه خشک پَم پَم👻" <support@pam-pam.ir>',
+      to: req.user.email,
+      subject: "فاکتور خرید",
+      html: `<div>
+      <h1>فروشگاه اینترنتی میوه خشک پَم پَم pam-pam.ir</h1>
+      <h2>فاکتور خرید</h2>
+      <h4>کد پیگیری : ${order.paymentInfo.shopTrackingCode}</h4>
+      <h6>${order.products}</h6>
+      <p>ازینکه فروشگاه مارو انتخاب کردید از شما سپاسگذاریم!</p>
+      </div>`,
+    });
+
     await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -104,4 +130,17 @@ exports.verifyOrder = async (req, res, next) => {
     console.log(err);
     res.send(err);
   }
+};
+
+exports.deleteCartItem = async (req, res, next) => {
+  const productId = req.body.productId;
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $pull: { cart: { productId: productId } },
+    },
+    { new: true }
+  );
+  console.log(user);
+  res.send(user);
 };
