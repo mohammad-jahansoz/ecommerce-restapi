@@ -10,5 +10,6 @@ router.put("/api/product/like/:id", productsController.setLike);
 router.put("/api/product/comment/:id", productsController.setComment);
 router.put("/api/product/addToCart", isAuth, userController.addToCart);
 router.put("/api/product/setOrder", isAuth, userController.setOrder);
+router.put("/api/product/verifyOrder", isAuth, userController.verifyOrder);
 
 module.exports = router;

@@ -82,7 +82,18 @@ exports.verifyOrder = async (req, res, next) => {
       { new: true }
     );
 
+<<<<<<< HEAD
     await User.findByIdAndUpdate(
+=======
+    const products = order.products;
+    for (const product of products) {
+      await Product.findByIdAndUpdate(product._id, {
+        $inc: { count: -product.quantity },
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+>>>>>>> verify-order
       req.user._id,
       {
         $push: {
@@ -92,6 +103,7 @@ exports.verifyOrder = async (req, res, next) => {
       },
       { new: true }
     );
+<<<<<<< HEAD
 
     const products = order.products;
     for (const product of products) {
@@ -100,6 +112,9 @@ exports.verifyOrder = async (req, res, next) => {
       });
     }
 
+=======
+    console.log(user);
+>>>>>>> verify-order
     res.send(order);
   } catch (err) {
     console.log(err);
