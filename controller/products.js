@@ -10,6 +10,7 @@ exports.getProduct = async (req, res, next) => {
     if (!product)
       return res.status(404).send(`we havent any product with ${productId} id`);
     res.status(200).send(product);
+    // fire and run => first send response to client after query to database.
     await Product.updateOne(
       { _id: new mongoose.Types.ObjectId(productId) },
       {

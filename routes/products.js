@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const productsController = require("../controller/products");
 const userController = require("../controller/user");
-const isAuth = require("../middleware/auth");
+const isAuth = require("../middleware/isAuth");
+const checkUser = require("../middleware/checkUser");
 
 router.get("/api/product/getCart", isAuth, userController.getCart);
 router.get("/api/product/:id", productsController.getProduct);

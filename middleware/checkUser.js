@@ -1,11 +1,5 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-
-// module.exports = function (req, res, next) {
-//   if (!req.user.isAdmin) return res.status(403).send("access denied");
-//   next();
-// };
-
 module.exports = async (req, res, next) => {
   const token = req.header("x-auth-token");
   try {
@@ -15,13 +9,10 @@ module.exports = async (req, res, next) => {
         const user = await User.findById(dataInToken._id).select(
           "-password -createdAt -updatedAt -__v"
         );
-        if (user.isAdmin) {
-          req.user = user;
-          return next();
-        }
+        req.user = user;
       }
     }
-    res.status(400).send("Access denied!");
+    next();
   } catch (err) {
     console.log(err);
     res.status(400).send("invalid token");

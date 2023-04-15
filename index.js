@@ -6,6 +6,7 @@ const Product = require("./models/product");
 const cors = require("cors");
 const productsRoutes = require("./routes/products");
 const authRoutes = require("./routes/auth");
+const checkUser = require("./middleware/checkUser");
 
 require("dotenv").config();
 app.use(cors());
@@ -16,6 +17,8 @@ try {
 } catch (err) {
   console.log(err);
 }
+
+app.use(checkUser);
 
 app.use(productsRoutes);
 app.use(authRoutes);
