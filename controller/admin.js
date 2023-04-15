@@ -140,8 +140,6 @@ exports.getProducts = async (req, res, next) => {
 
 exports.searchOrder = async (req, res, next) => {
   const searchedText = req.body.searchedText;
-  console.log(searchedText);
-  console.log(typeof searchedText);
   try {
     if (typeof searchedText === "string") {
       const order = await Order.find({
