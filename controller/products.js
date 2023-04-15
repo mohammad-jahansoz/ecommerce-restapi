@@ -2,14 +2,24 @@ const { mongoose } = require("mongoose");
 const Product = require("../models/product");
 exports.getProduct = async (req, res, next) => {
   const productId = req.params.id;
-  console.log(productId);
   if (!mongoose.Types.ObjectId.isValid(productId)) {
     return res.status(200).send("you send invelid id , ply try again");
   }
-  const product = await Product.findById(productId);
-  if (!product)
-    return res.status(404).send(`we havent any product with ${productId} id`);
-  res.status(200).send(product);
+  try {
+    const product = await Product.findById(productId);
+    if (!product)
+      return res.status(404).send(`we havent any product with ${productId} id`);
+    res.status(200).send(product);
+    await Product.updateOne(
+      { _id: new mongoose.Types.ObjectId(productId) },
+      {
+        $push: { views: new Date().toISOString() },
+      }
+    );
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
 };
 
 exports.setLike = async (req, res, next) => {

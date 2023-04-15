@@ -80,6 +80,10 @@ const ProductSchema = new Schema(
       ],
       default: [],
     },
+    views: {
+      type: [Date],
+      default: [],
+    },
     likes: {
       type: [Date],
       default: [],

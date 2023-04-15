@@ -134,7 +134,6 @@ exports.deleteComment = async (req, res, next) => {
 
 exports.getProducts = async (req, res, next) => {
   const products = await Product.find().sort({ createdAt: -1 });
-  const user = await User.findById(req.user._id).select("-password");
   res.status(200).send(products);
 };
 
@@ -144,7 +143,6 @@ exports.searchOrder = async (req, res, next) => {
     if (typeof searchedText === "string") {
       const order = await Order.find({
         $text: { $search: searchedText },
-        // { "paymentInfo.shopTrackingCode": searchedText },
       });
       console.log(order);
       res.send(order);
