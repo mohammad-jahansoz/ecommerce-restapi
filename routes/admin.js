@@ -36,5 +36,10 @@ router.delete(
   [isAuth, isAdmin],
   adminController.deleteComment
 );
+router.post(
+  "/api/order/search",
+  [isAuth, isAdmin],
+  adminController.searchOrder
+);
 
 module.exports = router;

@@ -39,4 +39,8 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+orderSchema.index({
+  "user.email": "text",
+});
+
 module.exports = mongoose.model("Order", orderSchema);

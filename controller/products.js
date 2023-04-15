@@ -55,4 +55,11 @@ exports.setComment = async (req, res, next) => {
   res.send(product.comments);
 };
 
-exports.searchProducts = async (req, res, next) => {};
+exports.searchProducts = async (req, res, next) => {
+  const searchedText = req.body.searchedText;
+  const products = await Product.find({
+    $text: { $search: searchedText },
+  }).select("_id name imageUrl count price category");
+  console.log(products);
+  res.send(products);
+};

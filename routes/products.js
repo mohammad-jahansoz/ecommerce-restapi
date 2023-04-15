@@ -11,6 +11,7 @@ router.put("/api/product/comment/:id", productsController.setComment);
 router.put("/api/product/addToCart", isAuth, userController.addToCart);
 router.put("/api/product/setOrder", isAuth, userController.setOrder);
 router.put("/api/product/verifyOrder", isAuth, userController.verifyOrder);
+router.post("/api/product/search", productsController.searchProducts);
 router.put(
   "/api/product/deleteCartItem",
   isAuth,

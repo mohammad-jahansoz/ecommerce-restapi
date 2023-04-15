@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const objectId = mongoose.Types.ObjectId;
 const Product = require("../models/product");
 const User = require("../models/user");
+const Order = require("../models/order");
 
 exports.updateProduct = async (req, res, next) => {
   const productId = req.params.id;
@@ -135,4 +136,29 @@ exports.getProducts = async (req, res, next) => {
   const products = await Product.find().sort({ createdAt: -1 });
   const user = await User.findById(req.user._id).select("-password");
   res.status(200).send(products);
+};
+
+exports.searchOrder = async (req, res, next) => {
+  const searchedText = req.body.searchedText;
+  console.log(searchedText);
+  console.log(typeof searchedText);
+  try {
+    if (typeof searchedText === "string") {
+      const order = await Order.find({
+        $text: { $search: searchedText },
+        // { "paymentInfo.shopTrackingCode": searchedText },
+      });
+      console.log(order);
+      res.send(order);
+    } else if (typeof searchedText === "number") {
+      const order = await Order.find({
+        "paymentInfo.shopTrackingCode": searchedText,
+      });
+      console.log(order);
+      res.send(order);
+    }
+  } catch (err) {
+    console.log(err);
+    res.send(err);
+  }
 };
