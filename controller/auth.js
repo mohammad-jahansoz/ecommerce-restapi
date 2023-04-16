@@ -72,4 +72,34 @@ exports.sendPasswordRecoveryEmail = async (req, res, next) => {
   }
 };
 
-exports.verifyPasswordRecoveryEmail = async (req, res, next) => {};
+exports.verifyPasswordRecoveryEmail = async (req, res, next) => {
+  const { email, token } = req.params;
+  const user = await User.findOne({
+    email: email,
+    token: token,
+    expireToken: { $gt: new Date().getTime() },
+  });
+  console.log(user);
+  res.send(user);
+};
+
+exports.setNewPassword = async (req, res, next) => {
+  const { email, token } = req.params;
+  const { password } = req.body;
+  const user = await User.findOne({
+    email: email,
+    token: token,
+    expireToken: { $gt: new Date().getTime() },
+  });
+  if (user) {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    user.password = hash;
+    user.token = undefined;
+    user.expireToken = undefined;
+    await user.save();
+    res.send("password changed");
+  } else {
+    res.send("pls try again send password recovery requrist");
+  }
+};
