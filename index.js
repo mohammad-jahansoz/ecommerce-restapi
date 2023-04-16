@@ -19,7 +19,6 @@ try {
 }
 
 app.use(checkUser);
-
 app.use(productsRoutes);
 app.use(authRoutes);
 

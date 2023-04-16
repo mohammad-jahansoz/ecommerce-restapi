@@ -11,6 +11,8 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     password: String,
+    token: String,
+    expireToken: Number,
     cart: [
       {
         productId: {

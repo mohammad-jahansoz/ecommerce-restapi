@@ -1,6 +1,18 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.NODEMAILER_HOST,
+  port: process.env.NODEMAILER_PORT,
+  secure: false,
+  auth: {
+    user: process.env.NODEMAILER_USER,
+    pass: process.env.NODEMAILER_PASS,
+  },
+});
 
 exports.postSignUp = async (req, res, next) => {
   const { email, password } = req.body;
@@ -42,3 +54,22 @@ exports.postSignIn = async (req, res, next) => {
     res.send(err);
   }
 };
+
+exports.sendPasswordRecoveryEmail = async (req, res, next) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email: email });
+  if (user) {
+    const token = crypto.randomBytes(24).toString("hex");
+    try {
+      user.token = token;
+      user.expireToken = new Date().getTime() + 60 * 60 * 1000;
+      await user.save();
+      res.send(user);
+    } catch (err) {
+      console.log(err);
+      res.send(err);
+    }
+  }
+};
+
+exports.verifyPasswordRecoveryEmail = async (req, res, next) => {};
