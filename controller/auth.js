@@ -85,6 +85,7 @@ exports.verifyPasswordRecoveryEmail = async (req, res, next) => {
 };
 
 exports.setNewPassword = async (req, res, next) => {
+  const jwtToken = req.header("x-auth-token");
   const { email, token } = req.params;
   const { password } = req.body;
   const user = await User.findOne({
@@ -98,6 +99,11 @@ exports.setNewPassword = async (req, res, next) => {
     user.password = hash;
     user.token = undefined;
     user.expireToken = undefined;
+    try {
+      await client.set(user._id.toString(), jwtToken);
+    } catch (err) {
+      console.log(err);
+    }
     await user.save();
     res.send("password changed");
   } else {

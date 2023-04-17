@@ -1,12 +1,14 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const client = require("../util/redis");
 
 module.exports = async (req, res, next) => {
   const token = req.header("x-auth-token");
   try {
     if (token) {
       const dataInToken = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-      if (dataInToken) {
+      const blackToken = await client.get(dataInToken._id.toString());
+      if (dataInToken && blackToken !== token) {
         const user = await User.findById(dataInToken._id).select(
           "-password -createdAt -updatedAt -__v"
         );
