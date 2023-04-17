@@ -3,7 +3,6 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const client = require("../util/redis");
 
 const transporter = nodemailer.createTransport({
   host: process.env.NODEMAILER_HOST,
@@ -100,9 +99,6 @@ exports.setNewPassword = async (req, res, next) => {
     user.expireToken = undefined;
     await user.save();
     res.send("password changed");
-    const token = req.header("x-auth-token");
-    client.set("test", "test value");
-    console.log(client.get("test"));
   } else {
     res.send("pls try again send password recovery requrist");
   }

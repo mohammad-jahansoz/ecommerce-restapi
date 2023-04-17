@@ -18,9 +18,6 @@ try {
   console.log(err);
 }
 
-client.set("test", "test value");
-console.log(client.get("test"));
-
 app.use(checkUser);
 app.use(productsRoutes);
 app.use(authRoutes);
