@@ -7,6 +7,7 @@ const cors = require("cors");
 const productsRoutes = require("./routes/products");
 const authRoutes = require("./routes/auth");
 const checkUser = require("./middleware/checkUser");
+const client = require("./util/redis");
 
 require("dotenv").config();
 app.use(cors());

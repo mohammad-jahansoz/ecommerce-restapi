@@ -3,6 +3,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const client = require("../util/redis");
 
 const transporter = nodemailer.createTransport({
   host: process.env.NODEMAILER_HOST,
