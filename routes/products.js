@@ -3,20 +3,49 @@ const router = express.Router();
 const productsController = require("../controller/products");
 const userController = require("../controller/user");
 const isAuth = require("../middleware/isAuth");
-const checkUser = require("../middleware/checkUser");
 
-router.get("/api/product/getCart", isAuth, userController.getCart);
-router.get("/api/product/:id", productsController.getProduct);
-router.put("/api/product/like/:id", productsController.setLike);
-router.put("/api/product/comment/:id", productsController.setComment);
-router.put("/api/product/addToCart", isAuth, userController.addToCart);
-router.put("/api/product/setOrder", isAuth, userController.setOrder);
-router.put("/api/product/verifyOrder", isAuth, userController.verifyOrder);
-router.post("/api/product/search", productsController.searchProducts);
+const asyncMiddleware = require("../middleware/async");
+
+router.get(
+  "/api/product/getCart",
+  isAuth,
+  asyncMiddleware(userController.getCart)
+);
+router.put(
+  "/api/product/like/:id",
+  asyncMiddleware(productsController.setLike)
+);
+router.put(
+  "/api/product/comment/:id",
+  asyncMiddleware(productsController.setComment)
+);
+router.put(
+  "/api/product/addToCart",
+  isAuth,
+  asyncMiddleware(userController.addToCart)
+);
+router.put(
+  "/api/product/setOrder",
+  isAuth,
+  asyncMiddleware(userController.setOrder)
+);
+router.put(
+  "/api/product/verifyOrder",
+  isAuth,
+  asyncMiddleware(userController.verifyOrder)
+);
+router.post(
+  "/api/product/search",
+  asyncMiddleware(productsController.searchProducts)
+);
+router.get(
+  "/api/product/getProduct/:id",
+  asyncMiddleware(productsController.getProduct)
+);
 router.put(
   "/api/product/deleteCartItem",
   isAuth,
-  userController.deleteCartItem
+  asyncMiddleware(userController.deleteCartItem)
 );
 
 module.exports = router;

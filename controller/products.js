@@ -74,3 +74,13 @@ exports.searchProducts = async (req, res, next) => {
   console.log(products);
   res.send(products);
 };
+
+exports.getProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find();
+    res.status(200).send(products);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("server error");
+  }
+};
