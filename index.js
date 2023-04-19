@@ -7,7 +7,7 @@ const cors = require("cors");
 const productsRoutes = require("./routes/products");
 const authRoutes = require("./routes/auth");
 const checkUser = require("./middleware/checkUser");
-const asyncMiddleware = require("./middleware/async");
+require("express-async-errors");
 
 require("dotenv").config();
 app.use(cors());
@@ -23,13 +23,10 @@ app.use(checkUser);
 app.use(productsRoutes);
 app.use(authRoutes);
 
-app.get(
-  "/",
-  asyncMiddleware(async (req, res) => {
-    const products = await Product.find();
-    res.status(200).send(products);
-  })
-);
+app.get("/", async (req, res) => {
+  const products = await Product.find();
+  res.status(200).send(products);
+});
 
 app.use("/admin", adminRoutes);
 
