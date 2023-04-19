@@ -4,8 +4,6 @@ const productsController = require("../controller/products");
 const userController = require("../controller/user");
 const isAuth = require("../middleware/isAuth");
 
-const asyncMiddleware = require("../middleware/async");
-
 router.get("/api/product/getCart", isAuth, userController.getCart);
 router.put("/api/product/like/:id", productsController.setLike);
 router.put("/api/product/comment/:id", productsController.setComment);

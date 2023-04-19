@@ -5,22 +5,18 @@ exports.getProduct = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(productId)) {
     return res.status(200).send("you send invelid id , ply try again");
   }
-  try {
-    const product = await Product.findById(productId);
-    if (!product)
-      return res.status(404).send(`we havent any product with ${productId} id`);
-    res.status(200).send(product);
-    // fire and run => first send response to client after query to database.
-    await Product.updateOne(
-      { _id: new mongoose.Types.ObjectId(productId) },
-      {
-        $push: { views: new Date().toISOString() },
-      }
-    );
-  } catch (err) {
-    console.log(err);
-    res.send(err);
-  }
+
+  const product = await Product.findById(productId);
+  if (!product)
+    return res.status(404).send(`we havent any product with ${productId} id`);
+  res.status(200).send(product);
+  // fire and run => first send response to client after query to database.
+  await Product.updateOne(
+    { _id: new mongoose.Types.ObjectId(productId) },
+    {
+      $push: { views: new Date().toISOString() },
+    }
+  );
 };
 
 exports.setLike = async (req, res, next) => {
@@ -76,11 +72,6 @@ exports.searchProducts = async (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-  try {
-    const products = await Product.find();
-    res.status(200).send(products);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("server error");
-  }
+  const products = await Product.find();
+  res.status(200).send(products);
 };

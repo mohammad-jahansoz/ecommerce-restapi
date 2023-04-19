@@ -21,39 +21,31 @@ exports.postSignUp = async (req, res, next) => {
   if (findUser) {
     return res.status(400).send("you have account in our database . pls login");
   }
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-    const user = new User({ email: email, password: hash });
-    await user.save();
-    const token = user.generateAuthToken();
-    res.header("x-auth-token", token).send(user);
-  } catch (err) {
-    console.log(err);
-    return res.send(err);
-  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
+  const user = new User({ email: email, password: hash });
+  await user.save();
+  const token = user.generateAuthToken();
+  res.header("x-auth-token", token).send(user);
 };
 
 exports.postSignIn = async (req, res, next) => {
   const { email, password } = req.body;
-  try {
-    let user = await User.findOne({ email: email });
-    if (!user) {
-      return res
-        .status(400)
-        .send(`we havent any user with ${email} email . pls signup `);
-    }
-    const result = await bcrypt.compare(password, user.password);
-    if (!result) {
-      return res.status(400).send("your password is incorrect ! try again");
-    }
-    const token = user.generateAuthToken();
-    console.log(token);
-    res.header("x-auth-token", token).send(user);
-  } catch (err) {
-    console.log(err);
-    res.send(err);
+
+  let user = await User.findOne({ email: email });
+  if (!user) {
+    return res
+      .status(400)
+      .send(`we havent any user with ${email} email . pls signup `);
   }
+  const result = await bcrypt.compare(password, user.password);
+  if (!result) {
+    return res.status(400).send("your password is incorrect ! try again");
+  }
+  const token = user.generateAuthToken();
+  console.log(token);
+  res.header("x-auth-token", token).send(user);
 };
 
 exports.sendPasswordRecoveryEmail = async (req, res, next) => {
@@ -61,15 +53,11 @@ exports.sendPasswordRecoveryEmail = async (req, res, next) => {
   const user = await User.findOne({ email: email });
   if (user) {
     const token = crypto.randomBytes(24).toString("hex");
-    try {
-      user.token = token;
-      user.expireToken = new Date().getTime() + 60 * 60 * 1000;
-      await user.save();
-      res.send(user);
-    } catch (err) {
-      console.log(err);
-      res.send(err);
-    }
+
+    user.token = token;
+    user.expireToken = new Date().getTime() + 60 * 60 * 1000;
+    await user.save();
+    res.send(user);
   }
 };
 

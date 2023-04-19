@@ -13,26 +13,22 @@ exports.updateProduct = async (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const count = req.body.count;
 
-  try {
-    const product = await Product.findByIdAndUpdate(
-      productId,
-      {
-        name: name,
-        category: category,
-        relatedProduct: relatedProduct,
-        price: price,
-        imageUrl: imageUrl,
-        count: count,
-      },
-      { new: true }
-    );
-    if (!product) {
-      return res.status(404).send(`we havent any product with ${productId} id`);
-    }
-    res.status(200).send(product);
-  } catch (err) {
-    console.log(err);
+  const product = await Product.findByIdAndUpdate(
+    productId,
+    {
+      name: name,
+      category: category,
+      relatedProduct: relatedProduct,
+      price: price,
+      imageUrl: imageUrl,
+      count: count,
+    },
+    { new: true }
+  );
+  if (!product) {
+    return res.status(404).send(`we havent any product with ${productId} id`);
   }
+  res.status(200).send(product);
 };
 
 exports.addProduct = async (req, res, next) => {
@@ -57,17 +53,14 @@ exports.addProduct = async (req, res, next) => {
 
 exports.removeProduct = async (req, res, next) => {
   const productId = req.params.id;
-  try {
-    const product = await Product.findByIdAndDelete(productId);
-    if (!product) {
-      return res.status(404).send("havent any product with this id");
-    }
-    return res
-      .status(200)
-      .send(`product ( ${product.name} )  deleted successfully`);
-  } catch (err) {
-    console.log(err);
+
+  const product = await Product.findByIdAndDelete(productId);
+  if (!product) {
+    return res.status(404).send("havent any product with this id");
   }
+  return res
+    .status(200)
+    .send(`product ( ${product.name} )  deleted successfully`);
 };
 
 exports.getComments = async (req, res, next) => {
@@ -113,23 +106,20 @@ exports.deleteComment = async (req, res, next) => {
   const commentId = req.params.commentId;
 
   console.log(commentId, productId);
-  try {
-    const product = await Product.findByIdAndUpdate(
-      productId,
-      {
-        $pull: {
-          comments: {
-            _id: new objectId(commentId),
-          },
+
+  const product = await Product.findByIdAndUpdate(
+    productId,
+    {
+      $pull: {
+        comments: {
+          _id: new objectId(commentId),
         },
       },
-      { new: true }
-    );
-    console.log(product);
-    res.send(product);
-  } catch (err) {
-    console.log(err);
-  }
+    },
+    { new: true }
+  );
+  console.log(product);
+  res.send(product);
 };
 
 exports.getProducts = async (req, res, next) => {
@@ -139,22 +129,18 @@ exports.getProducts = async (req, res, next) => {
 
 exports.searchOrder = async (req, res, next) => {
   const searchedText = req.body.searchedText;
-  try {
-    if (typeof searchedText === "string") {
-      const order = await Order.find({
-        $text: { $search: searchedText },
-      });
-      console.log(order);
-      res.send(order);
-    } else if (typeof searchedText === "number") {
-      const order = await Order.find({
-        "paymentInfo.shopTrackingCode": searchedText,
-      });
-      console.log(order);
-      res.send(order);
-    }
-  } catch (err) {
-    console.log(err);
-    res.send(err);
+
+  if (typeof searchedText === "string") {
+    const order = await Order.find({
+      $text: { $search: searchedText },
+    });
+    console.log(order);
+    res.send(order);
+  } else if (typeof searchedText === "number") {
+    const order = await Order.find({
+      "paymentInfo.shopTrackingCode": searchedText,
+    });
+    console.log(order);
+    res.send(order);
   }
 };

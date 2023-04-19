@@ -1,9 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controller/admin");
-const isAuth = require("../middleware/isAuth");
 const isAdmin = require("../middleware/isAdmin");
-const asyncMiddleware = require("../middleware/async");
 
 router.get("/api/products", isAdmin, adminController.getProducts);
 router.post("/api/product", isAdmin, adminController.addProduct);
