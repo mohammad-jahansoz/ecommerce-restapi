@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const client = require("../util/redis");
+const client = require("../startup/redis");
 
 module.exports = async (req, res, next) => {
   const token = req.header("x-auth-token");

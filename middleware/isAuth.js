@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const client = require("../util/redis");
+const client = require("../startup/redis");
 
 module.exports = async (req, res, next) => {
   try {

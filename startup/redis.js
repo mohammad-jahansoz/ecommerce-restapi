@@ -1,13 +1,14 @@
 const redis = require("redis");
 const client = redis.createClient();
+const logger = require("../startup/logger");
 
 client
   .connect()
-  .then(async (res) => {
-    console.log("connect redis successfully");
+  .then((res) => {
+    logger.info("Connect to Redis");
   })
   .catch((err) => {
-    console.log("err happened" + err);
+    logger.error(err.message, err);
   });
 
 module.exports = client;
